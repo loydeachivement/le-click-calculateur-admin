@@ -33,14 +33,38 @@
             margin-bottom: 20px;
         }
 
-        #login-container input[type="password"] {
+        /* Conteneur pour le champ de mot de passe et l'icône */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #login-container input[type="password"],
+        #login-container input[type="text"] {
             width: 100%;
             padding: 12px;
+            padding-right: 50px; /* Espace pour l'icône */
             margin-bottom: 20px;
             border: 1px solid #bdc3c7;
             border-radius: 5px;
             box-sizing: border-box;
             font-size: 16px;
+        }
+        
+        /* Style pour l'icône de toggle */
+        .toggle-icon {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            padding: 5px;
+            color: #7f8c8d;
+            border: none;
+            background: none;
+        }
+
+        .toggle-icon:hover {
+            color: #34495e;
         }
 
         #login-container button {
@@ -215,7 +239,16 @@
     <div id="login-container">
         <h2>Accès Sécurisé</h2>
         <p>Veuillez entrer le code d'accès pour continuer.</p>
-        <input type="password" id="codeInput" placeholder="Entrez le code">
+        <div class="password-wrapper">
+            <input type="password" id="codeInput" placeholder="Entrez le code">
+            <!-- Icône cliquable pour voir/masquer le code -->
+            <span id="togglePasswordBtn" class="toggle-icon" title="Afficher/Masquer le code">
+                <!-- Icône œil (visible par défaut) -->
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <!-- Icône œil barré (caché par défaut) -->
+                <svg id="eyeOffIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </span>
+        </div>
         <button id="validerBtn">Valider</button>
         <p id="messageErreur">Code incorrect.</p>
     </div>
@@ -279,10 +312,31 @@
         // Attendre que le contenu de la page soit entièrement chargé
         document.addEventListener('DOMContentLoaded', () => {
 
+            // --- LOGIQUE DE TOGGLE POUR LE MOT DE PASSE ---
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            const codeInput = document.getElementById('codeInput');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+            toggleBtn.addEventListener('click', () => {
+                // Obtenir le type actuel de l'input
+                const type = codeInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                codeInput.setAttribute('type', type);
+
+                // Changer l'icône en fonction du type
+                if (type === 'password') {
+                    eyeIcon.style.display = 'block';
+                    eyeOffIcon.style.display = 'none';
+                } else {
+                    eyeIcon.style.display = 'none';
+                    eyeOffIcon.style.display = 'block';
+                }
+            });
+
+
             // --- LOGIQUE DE CONNEXION ---
             const loginContainer = document.getElementById('login-container');
             const calculateurContainer = document.getElementById('calculateur');
-            const codeInput = document.getElementById('codeInput');
             const validerBtn = document.getElementById('validerBtn');
             const messageErreur = document.getElementById('messageErreur');
 
@@ -293,13 +347,11 @@
                 const codeEntre = codeInput.value;
 
                 if (codeEntre === codeCorrect) {
-                    // Si le code est correct, on cache la page de login et on montre le calculateur
                     loginContainer.style.display = 'none';
                     calculateurContainer.classList.remove('hidden');
                 } else {
-                    // Sinon, on affiche un message d'erreur
                     messageErreur.style.display = 'block';
-                    codeInput.value = ''; // Vider le champ de saisie
+                    codeInput.value = '';
                 }
             });
 
