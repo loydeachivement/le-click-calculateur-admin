@@ -412,6 +412,14 @@
                     </div>
                 </div>
 
+                <div class="result-item">
+                    <span class="label">Frais "In and Out" (calculés sur le montant du client et multipliés par 2)</span>
+                    <div class="value-group">
+                        <span class="value" id="resultat2">0.00</span>
+                        <span class="currency">XAF</span>
+                    </div>
+                </div>
+
                 <div class="result-item final">
                     <span class="label">Montant total à recevoir au Ghana</span>
                     <div class="value-group">
@@ -469,6 +477,14 @@
                             <span class="value" id="reste-frais">0.00</span>
                             <span class="currency">XAF (Frais)</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <span class="label">Frais additionnels (1% du montant du client)</span>
+                    <div class="value-group">
+                        <span class="value" id="reste-frais-additionnels">0.00</span>
+                        <span class="currency">XAF</span>
                     </div>
                 </div>
 
@@ -606,6 +622,7 @@
             
             const resultat1ClientSpan = document.getElementById('resultat1Client');
             const resultat1FraisSpan = document.getElementById('resultat1Frais');
+            const resultat2Span = document.getElementById('resultat2');
             const resultatFinalSpan = document.getElementById('resultatFinal');
 
             form.addEventListener('submit', (event) => {
@@ -622,11 +639,14 @@
                 const pourcentagePrincipal = 0.105;
                 const fraisPrincipal = montantInitial * pourcentagePrincipal;
                 const montantDuClient = montantInitial - fraisPrincipal;
+                const fraisInAndOutBase = montantDuClient * 0.01;
+                const fraisInAndOutTotal = fraisInAndOutBase * 2;
                 const tauxPar1 = tauxPour10000 / 10000;
                 const montantReceptionGHS = montantDuClient * tauxPar1;
 
                 resultat1ClientSpan.textContent = montantDuClient.toFixed(2);
                 resultat1FraisSpan.textContent = fraisPrincipal.toFixed(2);
+                resultat2Span.textContent = fraisInAndOutTotal.toFixed(2);
                 resultatFinalSpan.textContent = montantReceptionGHS.toFixed(2);
 
                 // Afficher uniquement les résultats pour Ghana
@@ -696,6 +716,7 @@
             const fraisResteInput = document.getElementById('fraisReste');
             const resteMontantClientSpan = document.getElementById('reste-montant-client');
             const resteFraisSpan = document.getElementById('reste-frais');
+            const resteFraisAdditionnelsSpan = document.getElementById('reste-frais-additionnels');
             const resteFinalSpan = document.getElementById('reste-final');
             
             resteForm.addEventListener('submit', (event) => {
@@ -713,11 +734,13 @@
                 
                 const fraisPrincipal = montantInitial * fraisPourcentage;
                 const montantDuClient = montantInitial - fraisPrincipal;
+                const fraisAdditionnels = montantDuClient * 0.01;
                 const tauxPar1 = tauxPour10000 / 10000;
-                const montantReception = montantDuClient * tauxPar1;
+                const montantReception = (montantDuClient - fraisAdditionnels) * tauxPar1;
                 
                 resteMontantClientSpan.textContent = montantDuClient.toFixed(2);
                 resteFraisSpan.textContent = fraisPrincipal.toFixed(2);
+                resteFraisAdditionnelsSpan.textContent = fraisAdditionnels.toFixed(2);
                 resteFinalSpan.textContent = montantReception.toFixed(2);
                 
                 // Afficher uniquement les résultats pour Reste de l'Afrique
